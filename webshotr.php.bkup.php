@@ -1,18 +1,11 @@
+<!--
 <?php
+
+/*
 
 header("Content-type: " . image_type_to_mime_type(IMAGETYPE_PNG));
 
-/**
- * @package WebShotr
- * @version 1.0
- */
-/*
-Plugin Name: Webshotr screenshots and thumbnails
-Plugin URI: http://www.webshotr.com/
-Description: Add rich experience to your website with webshotr screenshot service. Add website previews / thumbnails to links in your posts
-Author: WebShotr
-Version: 1.0
-*/
+
 
 global $wpdb;
 define(WEBSHOTR_DB_TABLE, $wpdb->prefix . 'webshotr');
@@ -267,5 +260,6 @@ register_activation_hook(__FILE__, 'webshotr_init_db');
 register_uninstall_hook(__FILE__, 'webshotr_uninstall_db');
 
 add_filter('the_content', 'webshotr_hook_post_links');
-
+*/
 ?>
+-->
