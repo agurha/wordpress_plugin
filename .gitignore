@@ -5,3 +5,24 @@ app/tmp/*
 app/[Cc]onfig/core.php
 app/[Cc]onfig/database.php
 !empty
+
+.idea
+idea/*
+
+
+# Editors
+*.esproj
+*.tmproj
+*.tmproject
+tmtags
+.*.sw[a-z]
+*.un~
+Session.vim
+*.swp
+.idea/*
+
+# Mac OSX
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
