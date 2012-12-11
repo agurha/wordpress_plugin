@@ -1,4 +1,6 @@
 var insertedjQuery = false;
+var insertedCrypto = false;
+
 var nextRequestId = 1;
 var nextHoverId = 1;
 var wsInitialWindowLoaded = false;
@@ -8,6 +10,8 @@ var WS_DEBUG_ERROR = 2;
 var WS_DEBUG_ALL = 10;
 var WebShotrAPIKey = "0000000000000";
 var WebShotrAPIToken = "0000000000000";
+var WebShotrAPISecret = "0000000000000";
+
 var WebShotrSize = "large";
 var WebShotrAnimationDelay = 1500;
 var WebShotrAjaxRequestDelay = 4000;
@@ -21,8 +25,14 @@ function WSLoadjQuery() {
   if (typeof (wsJQ) == "undefined") {
     if (!insertedjQuery) {
       var a = (("https:" == document.location.protocol) ? "https" : "http");
-      document.write('<script type="text/javascript" src="' + a + '://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"><\/script><script>wsJQ = jQuery.noConflict();<\/script>');
+      document.write('<script type="text/javascript" src="' + a + '://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"><\/script><script>wsJQ = jQuery.noConflict();<\/script>');
       insertedjQuery = true
+    }
+
+    if(!insertedCrypto) {
+
+      document.write('<script type="text/javascript" src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/hmac-sha1.js"><\/script>');
+      insertedCrypto = true
     }
 
     setTimeout("WSLoadjQuery()", 250)
@@ -118,7 +128,10 @@ function WSInitParams(a) {
 
   if (a.hoverselector) {
     WebShotrHoverSelector = a.hoverselector
+
+    console.log('hover selector is :' + WebShotrHoverSelector);
   }
+
 }
 
 function DelayLoadImgWithAnimation(e, k) {
@@ -313,8 +326,24 @@ function wsImage(a, j) {
   }
   if (!j.token) {
     j.token = WebShotrAPIToken
-    console.log(WebShotrAPIToken)
+    console.log('api token' + WebShotrAPIToken)
   }
+
+  if(!j.hoverValue){
+
+    j.hoverValue = WebShotrHoverSelector
+
+    console.log('some hover selector values :' +WebShotrHoverSelector);
+  }
+
+  if(!j.apiSecret) {
+
+    j.apiSecret = WebShotrAPISecret
+
+    console.log('api secret is :' + WebShotrAPISecret);
+  }
+
+
   if (!j.imgClass) {
     j.imgClass = "webshotr"
   } else {
@@ -325,13 +354,34 @@ function wsImage(a, j) {
   j.requestId = g;
   j.url = a;
 
-
+  console.log(a);
 
   var c = (("https:" == document.location.protocol) ? "https" : "http");
-  var b = c + "://" + WebShotrHost + "/" + j.key + "/" + j.token + "/png/?url=" + a ;
+
+  var cleanUrl = a.replace("https://",'');
+  cleanUrl = cleanUrl.replace("http://", '')
+  cleanUrl = cleanUrl.replace("www." , '')
+
+  console.log('before encoding' + cleanUrl);
+
+  cleanUrl = encodeURIComponent(cleanUrl);
+
+  console.log('after encoding' + cleanUrl);
+
+  var queryStr = "url=" + cleanUrl;
+
+  console.log(queryStr);
+
+  console.log('api secret is :' + WebShotrAPISecret);
+
+  var tokenHash =  CryptoJS.HmacSHA1(queryStr, WebShotrAPISecret);
+
+  var b = c + "://" + WebShotrHost + "/" + j.key + "/" + tokenHash + "/png/?url=" + cleanUrl ;
 
   console.log(b)
-//  var b = "http://api.webshotr.com/v1/c52ef68e-5af3-435f-b46b-5cb08c88e764/012f91c0bb2ac232dc24be4b402b46dd2272968c/png/?url=love.com&width=320&height=568&full_page=true&delay=1000&force=true&wrap=iphone5";
+
+//  var x = "http://api.webshotr.com/v1/c52ef68e-5af3-435f-b46b-5cb08c88e764/1ac6131947fbb0086affac23eeae723872df71b9/png/?url=india.com";
+
   var d = new RegExp("^(http://|https://)", "i");
   var h = a.match(d);
   if (!j.appendTo) {

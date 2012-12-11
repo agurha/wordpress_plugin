@@ -1,4 +1,7 @@
 <?php
+
+header("Content-type: " . image_type_to_mime_type(IMAGETYPE_PNG));
+
 /**
  * @package WebShotr
  * @version 1.0
@@ -15,13 +18,15 @@ global $wpdb;
 define(WEBSHOTR_DB_TABLE, $wpdb->prefix . 'webshotr');
 define(WEBSHOTR_VERSION, '1.0');
 
-function webshotr_init() {
+function webshotr_init()
+{
     wp_register_script('webshotr', 'https://s3.amazonaws.com/web.webshotr.com/webshotr_base.js');
     wp_enqueue_script('webshotr');
     add_action('wp_head', 'webshotr_js_init');
 }
 
-function webshotr_js_init() {
+function webshotr_js_init()
+{
     $settings = webshotr_get_db_settings();
     $isHoverEnabled = ($settings['hover_enabled'] == 1) ? true : false;
     $hoverSelector = $settings['hover_selector'];
@@ -29,15 +34,22 @@ function webshotr_js_init() {
     $apiSecret = $settings['api_secret'];
     $hoverSize = $settings['hover_size'];
 
-    $options['url'] = urlencode('www.microsoft.com');
-
-    foreach ($options as $key => $value) {
-        $_parts[] = "$key=$value";
-    }
-
-    $query_string = implode("&", $_parts);
-
-    $apiToken = hash_hmac("sha1", $query_string, $apiSecret);
+//    $thisurl = get_bloginfo('url');
+//    $thisurl = str_replace ("https://",'', $thisurl);
+//    $thisurl = str_replace ("http://",'', $thisurl);
+//    $thisurl = explode('/',$thisurl);
+//    $thisurl = $thisurl[0];
+//
+//
+//    $options['url'] = urlencode($thisurl);
+//
+//    foreach ($options as $key => $value) {
+//        $_parts[] = "$key=$value";
+//    }
+//
+//    $query_string = implode("&", $_parts);
+//
+//    $apiToken = hash_hmac("sha1", $query_string, $apiSecret);
 
 
     if (!$isHoverEnabled)
@@ -45,22 +57,26 @@ function webshotr_js_init() {
 
     echo "<!-- Begin -->\n";
     echo "<script type=\"text/javascript\">\n";
-    echo "    WebShotrAPIKey = '".$apiKey."';\n";
-    echo "    WebShotrAPIToken = '".$apiToken."';\n";
-    echo "    WebShotrSize = '".$hoverSize."';\n";
-    echo "    WebShotrHoverSelector = '".$hoverSelector."';\n";
+    echo "    WebShotrAPIKey = '" . $apiKey . "';\n";
+    echo "    WebShotrAPISecret = '" . $apiSecret . "';\n";
+    echo "    WebShotrSize = '" . $hoverSize . "';\n";
+    echo "    WebShotrHoverSelector = '" . $hoverSelector . "';\n";
+//    echo "    PostUrl = '" . $thisurl . "';\n";
+//    echo "    QueryString = '" . $query_string . "';\n";
+
     echo "</script>\n";
     echo "<!-- End -->\n";
 }
 
-function webshotr_init_db() {
+function webshotr_init_db()
+{
     global $wpdb;
 
     // First time install
-    if($wpdb->get_var("SHOW TABLES LIKE '".WEBSHOTR_DB_TABLE."'") != WEBSHOTR_DB_TABLE) {
-        $sql = "CREATE TABLE IF NOT EXISTS ".WEBSHOTR_DB_TABLE." (api_key CHAR(150), api_secret CHAR(150), api_token CHAR(150), hover_size CHAR(9), hover_enabled TINYINT(1), hover_selector TEXT)";
+    if ($wpdb->get_var("SHOW TABLES LIKE '" . WEBSHOTR_DB_TABLE . "'") != WEBSHOTR_DB_TABLE) {
+        $sql = "CREATE TABLE IF NOT EXISTS " . WEBSHOTR_DB_TABLE . " (api_key CHAR(150), api_secret CHAR(150), hover_size CHAR(9), hover_enabled TINYINT(1), hover_selector TEXT)";
         $result = $wpdb->query($sql);
-        $result = $result && $wpdb->query("TRUNCATE ".WEBSHOTR_DB_TABLE);
+        $result = $result && $wpdb->query("TRUNCATE " . WEBSHOTR_DB_TABLE);
         $result = $result && $wpdb->insert(WEBSHOTR_DB_TABLE,
             array(
                 'hover_selector' => base64_encode('a.webshotr,a.webshotr_post_hover'),
@@ -82,7 +98,8 @@ function webshotr_init_db() {
     return true;
 }
 
-function webshotr_uninstall_db() {
+function webshotr_uninstall_db()
+{
     global $wpdb;
 
     $sql = "DROP TABLE IF EXISTS " . WEBSHOTR_DB_TABLE;
@@ -90,10 +107,11 @@ function webshotr_uninstall_db() {
     delete_option('webshotr_version');
 }
 
-function webshotr_get_db_settings() {
+function webshotr_get_db_settings()
+{
     global $wpdb;
 
-    $query = "SELECT api_key, api_secret, api_token, hover_size, hover_enabled, hover_selector FROM " . WEBSHOTR_DB_TABLE . " LIMIT 1";
+    $query = "SELECT api_key, api_secret, hover_size, hover_enabled, hover_selector FROM " . WEBSHOTR_DB_TABLE . " LIMIT 1";
     $data = $wpdb->get_results($query, ARRAY_A);
     $data = isset($data[0]) ? $data[0] : $data;
 
@@ -102,11 +120,13 @@ function webshotr_get_db_settings() {
     return $data;
 }
 
-function webshotr_add_pages() {
+function webshotr_add_pages()
+{
     add_options_page('Webshotr Screenshot Service', 'Webshotr', 'manage_options', __FILE__, 'webshotr_manager');
 }
 
-function webshotr_manager() {
+function webshotr_manager()
+{
     global $wpdb;
 
     // Did the manager save changes to this page
@@ -122,7 +142,7 @@ function webshotr_manager() {
                 if ($key == "hover_enabled") {
                     // Make sure there is an api key and secret to use
                     $settings = webshotr_get_db_settings();
-                    if (strlen($settings['api_key']) < 3 || strlen($settings['api_secret']) < 3 ) {
+                    if (strlen($settings['api_key']) < 3 || strlen($settings['api_secret']) < 3) {
                         $error = "Before you can enable this plugin, you must specify your api key and secret below.";
                         $success = false;
                         continue;
@@ -130,23 +150,21 @@ function webshotr_manager() {
                 } else if ($key == "api_key") {
                     $value = trim($value);
 
-                }
-                else if ($key == "api_secret") {
+                } else if ($key == "api_secret") {
                     $value = trim($value);
-                }
-
-                else if ($key == "hover_selector") {
+                } else if ($key == "hover_selector") {
                     $value = implode(",", array_filter(explode("\r\n", $value)));
                     $value = base64_encode($value);
+
                 }
 
                 // Save this value
-                $success = $success & ($wpdb->query($wpdb->prepare("UPDATE ".WEBSHOTR_DB_TABLE." SET ".$key." = %s", $value)) !== false);
+                $success = $success & ($wpdb->query($wpdb->prepare("UPDATE " . WEBSHOTR_DB_TABLE . " SET " . $key . " = %s", $value)) !== false);
             }
         }
 
         if (!$success) {
-            echo "<div style='color: #d8000c; background-color: #ffbaba; border: 3px solid red; padding: 5px; margin-top: 5px;'>An error occurred while updating the settings in the database. ".$error."</div>\n";
+            echo "<div style='color: #d8000c; background-color: #ffbaba; border: 3px solid red; padding: 5px; margin-top: 5px;'>An error occurred while updating the settings in the database. " . $error . "</div>\n";
         } else {
             echo "<div style='color: #4f8a10; background-color: #dff2bf; border: 3px solid green; padding: 5px; margin-top: 5px;'>Your changes have been saved.</div>\n";
         }
@@ -171,14 +189,14 @@ function webshotr_manager() {
 
     echo "<h2>Webshotr Screenshot Service</h2>\n";
     echo "<br />\n";
-    echo "<form name='webshotr_enable_disable' action='".$_SERVER["REQUEST_URI"]."' method='post'>\n";
+    echo "<form name='webshotr_enable_disable' action='" . $_SERVER["REQUEST_URI"] . "' method='post'>\n";
     echo "<div style='text-decoration: underline;'>Main Options</div>\n";
-    echo "<div>Hover Link Thumbnails: <span style='font-weight: bold;'>".($isHoverEnabled ? 'Enabled' : 'Disabled')."</span></div>\n";
-    echo "<input type='hidden' name='ws_hover_enabled' value='".($isHoverEnabled ? '0' : '1')."' />\n";
-    echo "<div class='submit'><input type='submit' value='".($isHoverEnabled ? 'Disable' : 'Enable')." It' /></div>\n";
+    echo "<div>Hover Link Thumbnails: <span style='font-weight: bold;'>" . ($isHoverEnabled ? 'Enabled' : 'Disabled') . "</span></div>\n";
+    echo "<input type='hidden' name='ws_hover_enabled' value='" . ($isHoverEnabled ? '0' : '1') . "' />\n";
+    echo "<div class='submit'><input type='submit' value='" . ($isHoverEnabled ? 'Disable' : 'Enable') . " It' /></div>\n";
     echo "</form>\n";
 
-    echo "<form name='webshotr_manager' action='".$_SERVER["REQUEST_URI"]."' method='post'>\n";
+    echo "<form name='webshotr_manager' action='" . $_SERVER["REQUEST_URI"] . "' method='post'>\n";
     echo "<br />\n";
     echo "<div style='text-decoration: underline;'>Hover CSS Selectors</div>\n";
     echo "<p>This is an advanced feature, generally you won't need to change this setting but it is here if you do.  You can specify additional CSS selectors that will trigger hover thumbnail popups.</p>\n";
@@ -193,22 +211,22 @@ function webshotr_manager() {
     echo "<br />\n";
     echo "<div style='text-decoration: underline;'>API Key</div>\n";
     echo "<p>The api key can be found after logging into your Webshotr Dashboard at <a href='http://www.webshotr.com' target='_blank'>http://www.webshotr.com</a>.</p>\n";
-    echo "<input name='ws_api_key' type='text' value='".$apiKey."' />\n";
+    echo "<input name='ws_api_key' type='text' value='" . $apiKey . "' />\n";
     echo "<div class='submit'><input type='submit' value='Save Changes' /></div>\n";
     echo "<br />\n";
     echo "<div style='text-decoration: underline;'>API Secret</div>\n";
     echo "<p>The api secret can be found after logging into your Webshotr Dashboard at <a href='http://www.webshotr.com' target='_blank'>http://www.webshotr.com</a>.</p>\n";
-    echo "<input name='ws_api_secret' type='text' value='".$apiSecret."' />\n";
+    echo "<input name='ws_api_secret' type='text' value='" . $apiSecret . "' />\n";
     echo "<div class='submit'><input type='submit' value='Save Changes' /></div>\n";
     echo "<br />\n";
     echo "<div style='text-decoration: underline;'>Thumbnail Image Size</div>\n";
     echo "<div style='width: 35%; float: left;'>\n";
-    echo "<div><input name='ws_hover_size' id='RequestMicroSize' value='micro' onchange='ws_set_sample(75,56);' type='radio' ".($hoverSize=='micro'?"checked=''":"")."><label for='RequestMicroSize'>Micro (75 x 56)</label></div>\n";
-    echo "<div><input name='ws_hover_size' id='RequestTinySize' value='tiny' onchange='ws_set_sample(90,68);' type='radio' ".($hoverSize=='tiny'?"checked=''":"")."><label for='RequestTinySize'>Tiny (90 x 68)</label></div>\n";
-    echo "<div><input name='ws_hover_size' id='RequestVerySmallSize' value='verysmall' onchange='ws_set_sample(100,75);' type='radio' ".($hoverSize=='verysmall'?"checked=''":"")."><label for='RequestVerySmallSize'>Very Small (100 x 75)</label></div>\n";
-    echo "<div><input name='ws_hover_size' id='RequestSmallSize' value='small' onchange='ws_set_sample(120,90);' type='radio' ".($hoverSize=='small'?"checked=''":"")."><label for='RequestSmallSize'>Small (120 x 90)</label></div>\n";
-    echo "<div><input name='ws_hover_size' id='RequestLargeSize' value='large' onchange='ws_set_sample(200,150);' type='radio' ".($hoverSize=='large'?"checked=''":"")."><label for='RequestLargeSize'>Large (200 x 150)</label></div>\n";
-    echo "<div><input name='ws_hover_size' id='RequestXLargeSize' value='xlarge' onchange='ws_set_sample(320,240);' type='radio' ".($hoverSize=='xlarge'?"checked=''":"")."><label for='RequestXLargeSize'>Extra Large (320 x 240)</label></div>\n";
+    echo "<div><input name='ws_hover_size' id='RequestMicroSize' value='micro' onchange='ws_set_sample(75,56);' type='radio' " . ($hoverSize == 'micro' ? "checked=''" : "") . "><label for='RequestMicroSize'>Micro (75 x 56)</label></div>\n";
+    echo "<div><input name='ws_hover_size' id='RequestTinySize' value='tiny' onchange='ws_set_sample(90,68);' type='radio' " . ($hoverSize == 'tiny' ? "checked=''" : "") . "><label for='RequestTinySize'>Tiny (90 x 68)</label></div>\n";
+    echo "<div><input name='ws_hover_size' id='RequestVerySmallSize' value='verysmall' onchange='ws_set_sample(100,75);' type='radio' " . ($hoverSize == 'verysmall' ? "checked=''" : "") . "><label for='RequestVerySmallSize'>Very Small (100 x 75)</label></div>\n";
+    echo "<div><input name='ws_hover_size' id='RequestSmallSize' value='small' onchange='ws_set_sample(120,90);' type='radio' " . ($hoverSize == 'small' ? "checked=''" : "") . "><label for='RequestSmallSize'>Small (120 x 90)</label></div>\n";
+    echo "<div><input name='ws_hover_size' id='RequestLargeSize' value='large' onchange='ws_set_sample(200,150);' type='radio' " . ($hoverSize == 'large' ? "checked=''" : "") . "><label for='RequestLargeSize'>Large (200 x 150)</label></div>\n";
+    echo "<div><input name='ws_hover_size' id='RequestXLargeSize' value='xlarge' onchange='ws_set_sample(320,240);' type='radio' " . ($hoverSize == 'xlarge' ? "checked=''" : "") . "><label for='RequestXLargeSize'>Extra Large (320 x 240)</label></div>\n";
     echo "</div>\n";
     echo "<div id='wsSample' style='float: left; background-color: lightgrey; border: 2px solid black; width: 0; height: 0; display: none;'><center>Sample</center></div>\n";
     echo "<div style='clear: both;' class='submit'><input type='submit' value='Save Changes' /></div>\n";
@@ -226,7 +244,8 @@ function webshotr_manager() {
     echo "</script>\n";
 }
 
-function webshotr_hook_post_links($content) {
+function webshotr_hook_post_links($content)
+{
     $settings = webshotr_get_db_settings();
     $isHoverEnabled = ($settings['hover_enabled'] == 1) ? true : false;
 
