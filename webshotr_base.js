@@ -6,13 +6,14 @@ var WS_DEBUG_NORMAL = 0;
 var WS_DEBUG_WARNING = 1;
 var WS_DEBUG_ERROR = 2;
 var WS_DEBUG_ALL = 10;
-var WebShotrKey = "0000000000000";
+var WebShotrAPIKey = "0000000000000";
+var WebShotrAPIToken = "0000000000000";
 var WebShotrSize = "large";
 var WebShotrAnimationDelay = 1500;
 var WebShotrAjaxRequestDelay = 4000;
 var WebShotrDebug = "false";
 var WebShotrDebugLevel = WS_DEBUG_ERROR;
-var WebShotrHost = "www.webshotr.com";
+var WebShotrHost = "www.api.webshotr.com/v1";
 var WebShotrHoverSelector = "a.webshotr";
 var wsJQ = undefined;
 
@@ -23,6 +24,7 @@ function WSLoadjQuery() {
       document.write('<script type="text/javascript" src="' + a + '://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"><\/script><script>wsJQ = jQuery.noConflict();<\/script>');
       insertedjQuery = true
     }
+
     setTimeout("WSLoadjQuery()", 250)
   } else {
     wsJQ(function (b) {
@@ -39,7 +41,9 @@ function WSLoadjQuery() {
 }
 function WSLoadParams() {
   var a = document.getElementsByTagName("script");
+  console.log('first' + a);
   var c = a[a.length - 1].src;
+  console.log('second' + c);
   var e = new RegExp("[?][^#]*", "i");
   var b = {};
   c = unescape(c);
@@ -98,7 +102,12 @@ function WSInitParams(a) {
     }
   }
   if (a.key) {
-    WebShotrKey = a.key
+    WebShotrAPIKey = a.key
+  }
+  if (a.secret) {
+    WebShotrAPIToken = a.token
+
+    console.log('secret is ' + WebShotrAPIToken);
   }
   if (a.ajaxdelay) {
     WebShotrAjaxRequestDelay = a.ajaxdelay * 1000
@@ -300,7 +309,11 @@ function wsImage(a, j) {
     j.size = WebShotrSize
   }
   if (!j.key) {
-    j.key = WebShotrKey
+    j.key = WebShotrAPIKey
+  }
+  if (!j.token) {
+    j.token = WebShotrAPIToken
+    console.log(WebShotrAPIToken)
   }
   if (!j.imgClass) {
     j.imgClass = "webshotr"
@@ -311,8 +324,14 @@ function wsImage(a, j) {
   nextRequestId = nextRequestId + 1;
   j.requestId = g;
   j.url = a;
+
+
+
   var c = (("https:" == document.location.protocol) ? "https" : "http");
-  var b = "http://api.webshotr.com/v1/c52ef68e-5af3-435f-b46b-5cb08c88e764/012f91c0bb2ac232dc24be4b402b46dd2272968c/png/?url=love.com&width=320&height=568&full_page=true&delay=1000&force=true&wrap=iphone5";
+  var b = c + "://" + WebShotrHost + "/" + j.key + "/" + j.token + "/png/?url=" + a ;
+
+  console.log(b)
+//  var b = "http://api.webshotr.com/v1/c52ef68e-5af3-435f-b46b-5cb08c88e764/012f91c0bb2ac232dc24be4b402b46dd2272968c/png/?url=love.com&width=320&height=568&full_page=true&delay=1000&force=true&wrap=iphone5";
   var d = new RegExp("^(http://|https://)", "i");
   var h = a.match(d);
   if (!j.appendTo) {

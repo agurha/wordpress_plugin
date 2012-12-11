@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="de339c84-edaf-4873-aa96-250620e3abd7" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/wordpress_plugin.iml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/webshotr.php.zip" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webshotr.php" afterPath="$PROJECT_DIR$/webshotr.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webshotr_base.js" afterPath="$PROJECT_DIR$/webshotr_base.js" />
     </list>
     <ignored path="wordpress_plugin.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,9 +28,9 @@
       <file leaf-file-name="webshotr_base.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webshotr_base.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="34" selection-start="302" selection-end="302" vertical-scroll-proportion="0.0">
+            <state line="308" column="25" selection-start="8434" selection-end="8434" vertical-scroll-proportion="-7.3846154">
               <folding>
-                <marker date="1355185114000" expanded="false" signature="3119:3142" placeholder="..." />
+                <marker date="1355195809000" expanded="false" signature="3334:3357" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -49,11 +45,34 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="0" selection-start="130" selection-end="130" vertical-scroll-proportion="0.25920472">
+            <state line="8" column="5" selection-start="121" selection-end="121" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="webshotr.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/webshotr.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="246" column="55" selection-start="11527" selection-end="11527" vertical-scroll-proportion="0.84390247">
+              <folding>
+                <marker date="1355195678000" expanded="true" signature="5102:5200" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="6169:6196" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="6742:6769" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="7031:7049" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="7163:7181" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="7361:7389" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="7519:7537" placeholder="..." />
+                <marker date="1355195678000" expanded="false" signature="7723:7750" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="8143:8170" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="8575:8602" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="8657:8681" placeholder="..." />
+                <marker date="1355195678000" expanded="true" signature="10169:10271" placeholder="..." />
+                <marker date="1355195678000" expanded="false" signature="10329:10341" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -73,9 +92,12 @@
       <list>
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/webshotr.php" />
+        <option value="$PROJECT_DIR$/webshotr_base.js" />
       </list>
     </option>
   </component>
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
     <option name="y" value="22" />
     <option name="width" value="1440" />
@@ -143,6 +165,9 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
+      <method />
+    </configuration>
     <list size="0" />
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
@@ -229,15 +254,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/webshotr_base.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="34" selection-start="302" selection-end="302" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1355185114000" expanded="false" signature="3119:3142" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
         <state line="15" column="0" selection-start="300" selection-end="300" vertical-scroll-proportion="0.0">
@@ -247,8 +263,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="0" selection-start="130" selection-end="130" vertical-scroll-proportion="0.25920472">
+        <state line="8" column="5" selection-start="121" selection-end="121" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webshotr_base.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="308" column="25" selection-start="8434" selection-end="8434" vertical-scroll-proportion="-7.3846154">
+          <folding>
+            <marker date="1355195809000" expanded="false" signature="3334:3357" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webshotr.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="246" column="55" selection-start="11527" selection-end="11527" vertical-scroll-proportion="0.84390247">
+          <folding>
+            <marker date="1355195678000" expanded="true" signature="5102:5200" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="6169:6196" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="6742:6769" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="7031:7049" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="7163:7181" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="7361:7389" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="7519:7537" placeholder="..." />
+            <marker date="1355195678000" expanded="false" signature="7723:7750" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="8143:8170" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="8575:8602" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="8657:8681" placeholder="..." />
+            <marker date="1355195678000" expanded="true" signature="10169:10271" placeholder="..." />
+            <marker date="1355195678000" expanded="false" signature="10329:10341" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>

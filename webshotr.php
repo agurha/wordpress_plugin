@@ -25,15 +25,28 @@ function webshotr_js_init() {
     $settings = webshotr_get_db_settings();
     $isHoverEnabled = ($settings['hover_enabled'] == 1) ? true : false;
     $hoverSelector = $settings['hover_selector'];
-    $accessKey = $settings['access_key'];
+    $apiKey = $settings['api_key'];
+    $apiSecret = $settings['api_secret'];
     $hoverSize = $settings['hover_size'];
+
+    $options['url'] = urlencode('www.microsoft.com');
+
+    foreach ($options as $key => $value) {
+        $_parts[] = "$key=$value";
+    }
+
+    $query_string = implode("&", $_parts);
+
+    $apiToken = hash_hmac("sha1", $query_string, $apiSecret);
+
 
     if (!$isHoverEnabled)
         return;
 
     echo "<!-- Begin -->\n";
     echo "<script type=\"text/javascript\">\n";
-    echo "    WebShotrKey = '".$accessKey."';\n";
+    echo "    WebShotrAPIKey = '".$apiKey."';\n";
+    echo "    WebShotrAPIToken = '".$apiToken."';\n";
     echo "    WebShotrSize = '".$hoverSize."';\n";
     echo "    WebShotrHoverSelector = '".$hoverSelector."';\n";
     echo "</script>\n";
@@ -45,7 +58,7 @@ function webshotr_init_db() {
 
     // First time install
     if($wpdb->get_var("SHOW TABLES LIKE '".WEBSHOTR_DB_TABLE."'") != WEBSHOTR_DB_TABLE) {
-        $sql = "CREATE TABLE IF NOT EXISTS ".WEBSHOTR_DB_TABLE." (access_key CHAR(36), hover_size CHAR(9), hover_enabled TINYINT(1), hover_selector TEXT)";
+        $sql = "CREATE TABLE IF NOT EXISTS ".WEBSHOTR_DB_TABLE." (api_key CHAR(150), api_secret CHAR(150), api_token CHAR(150), hover_size CHAR(9), hover_enabled TINYINT(1), hover_selector TEXT)";
         $result = $wpdb->query($sql);
         $result = $result && $wpdb->query("TRUNCATE ".WEBSHOTR_DB_TABLE);
         $result = $result && $wpdb->insert(WEBSHOTR_DB_TABLE,
@@ -80,7 +93,7 @@ function webshotr_uninstall_db() {
 function webshotr_get_db_settings() {
     global $wpdb;
 
-    $query = "SELECT access_key, hover_size, hover_enabled, hover_selector FROM " . WEBSHOTR_DB_TABLE . " LIMIT 1";
+    $query = "SELECT api_key, api_secret, api_token, hover_size, hover_enabled, hover_selector FROM " . WEBSHOTR_DB_TABLE . " LIMIT 1";
     $data = $wpdb->get_results($query, ARRAY_A);
     $data = isset($data[0]) ? $data[0] : $data;
 
@@ -107,16 +120,22 @@ function webshotr_manager() {
                 $key = preg_replace("/[^a-zA-Z0-9_]+/", "", substr($key, 3));
 
                 if ($key == "hover_enabled") {
-                    // Make sure there is an access key to use
+                    // Make sure there is an api key and secret to use
                     $settings = webshotr_get_db_settings();
-                    if (strlen($settings['access_key']) < 3) {
-                        $error = "Before you can enable this plugin, you must specify your access key below.";
+                    if (strlen($settings['api_key']) < 3 || strlen($settings['api_secret']) < 3 ) {
+                        $error = "Before you can enable this plugin, you must specify your api key and secret below.";
                         $success = false;
                         continue;
                     }
-                } else if ($key == "access_key") {
+                } else if ($key == "api_key") {
                     $value = trim($value);
-                } else if ($key == "hover_selector") {
+
+                }
+                else if ($key == "api_secret") {
+                    $value = trim($value);
+                }
+
+                else if ($key == "hover_selector") {
                     $value = implode(",", array_filter(explode("\r\n", $value)));
                     $value = base64_encode($value);
                 }
@@ -136,7 +155,8 @@ function webshotr_manager() {
     $settings = webshotr_get_db_settings();
     $isHoverEnabled = ($settings['hover_enabled'] == 1) ? true : false;
     $hoverSelector = $settings['hover_selector'];
-    $accessKey = $settings['access_key'];
+    $apiKey = $settings['api_key'];
+    $apiSecret = $settings['api_secret'];
     $hoverSize = $settings['hover_size'];
 
     echo "<script type=\"text/javascript\">\n";
@@ -161,7 +181,7 @@ function webshotr_manager() {
     echo "<form name='webshotr_manager' action='".$_SERVER["REQUEST_URI"]."' method='post'>\n";
     echo "<br />\n";
     echo "<div style='text-decoration: underline;'>Hover CSS Selectors</div>\n";
-    echo "<p>This is an advanced feature, generally you won't need to change this setting but it is here if you do.  You can specify additional CSS selectors that will trigger hover thumbnail popups. For instance, you could add a CSS selector that would enable hover thumbnails for links in a blog roll section.</p>\n";
+    echo "<p>This is an advanced feature, generally you won't need to change this setting but it is here if you do.  You can specify additional CSS selectors that will trigger hover thumbnail popups.</p>\n";
     echo "<div style='margin-left: 15px;'><pre>Any link with the class 'webshotr' (default):</pre><code>a.webshotr</code></div>\n";
     echo "<div style='margin-left: 15px;'><pre>Links in your posts (default):</pre><code>a.webshotr_post_hover</code></div>\n";
     echo "<br />\n";
@@ -171,9 +191,14 @@ function webshotr_manager() {
     echo "<div><span style='font-weight: bold;'>Note:</span> Enter one CSS selector per line.</div>\n";
     echo "<div class='submit'><input type='submit' value='Save Changes' /></div>\n";
     echo "<br />\n";
-    echo "<div style='text-decoration: underline;'>Access Key</div>\n";
-    echo "<p>The access key can be found after logging into your Webshotr Dashboard at <a href='http://www.webshotr.com' target='_blank'>http://www.webshotr.com</a>.</p>\n";
-    echo "<input name='ws_access_key' type='text' value='".$accessKey."' />\n";
+    echo "<div style='text-decoration: underline;'>API Key</div>\n";
+    echo "<p>The api key can be found after logging into your Webshotr Dashboard at <a href='http://www.webshotr.com' target='_blank'>http://www.webshotr.com</a>.</p>\n";
+    echo "<input name='ws_api_key' type='text' value='".$apiKey."' />\n";
+    echo "<div class='submit'><input type='submit' value='Save Changes' /></div>\n";
+    echo "<br />\n";
+    echo "<div style='text-decoration: underline;'>API Secret</div>\n";
+    echo "<p>The api secret can be found after logging into your Webshotr Dashboard at <a href='http://www.webshotr.com' target='_blank'>http://www.webshotr.com</a>.</p>\n";
+    echo "<input name='ws_api_secret' type='text' value='".$apiSecret."' />\n";
     echo "<div class='submit'><input type='submit' value='Save Changes' /></div>\n";
     echo "<br />\n";
     echo "<div style='text-decoration: underline;'>Thumbnail Image Size</div>\n";
